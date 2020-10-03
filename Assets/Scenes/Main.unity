@@ -240,7 +240,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ghostPref:
-  - {fileID: 6786048321605302459, guid: cebd70ab10810db43a30b806f85bb68a, type: 3}
-  - {fileID: 6786048321605302459, guid: c45b30b95a2089c4b82efcb64f6401f8, type: 3}
-  - {fileID: 6786048321605302459, guid: 364038f0e54f7514f82bf7b266c25cf8, type: 3}
-  - {fileID: 6786048321605302459, guid: 3929deeee7a854c48a51d4157f47aed9, type: 3}
+  - {fileID: 6786048321605302459, guid: 1613cac5e1d0c104791867bc238efae4, type: 3}
+  - {fileID: 6786048321605302459, guid: 1613cac5e1d0c104791867bc238efae4, type: 3}
+  - {fileID: 6786048321605302459, guid: 1613cac5e1d0c104791867bc238efae4, type: 3}
+  - {fileID: 6786048321605302459, guid: 1613cac5e1d0c104791867bc238efae4, type: 3}
