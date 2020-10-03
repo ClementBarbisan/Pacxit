@@ -9,10 +9,16 @@ public class GhostsManager : MonoBehaviour
     public static GhostsManager Instance;
     [SerializeField] private List<GameObject> ghostPref;
     private List<Ghost> _ghosts;
+
+    private AudioSource _source;
+
+    private Transform _trPlayer;
     // Start is called before the first frame update
     private void Awake()
     {
         Instance = this;
+        _source = FindObjectOfType<AudioSource>();
+        _trPlayer = FindObjectOfType<Player>().gameObject.transform;
         _ghosts = new List<Ghost>();
         for (int i = 0; i < ghostPref.Count; i++)
         {

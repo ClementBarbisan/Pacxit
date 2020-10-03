@@ -14,6 +14,7 @@ public class ParserMap : MonoBehaviour
     [SerializeField] private GameObject exit = null;
     [SerializeField] private GameObject terrain = null;
     [SerializeField] private GameObject teleport = null;
+    [SerializeField] private GameObject pills = null;
     private string[] _mapDeserialize;
     [FormerlySerializedAs("_map")] public int[,] map;
     [FormerlySerializedAs("_mapConcrete")] public GameObject[,] mapConcrete;
@@ -58,19 +59,23 @@ public class ParserMap : MonoBehaviour
                         break;
                     case 2:
                         mapConcrete[i, j] = Instantiate(empty,
-                            new Vector3(i * terrain.gameObject.transform.right.x +0.5f,
+                            new Vector3(i * terrain.gameObject.transform.right.x + 0.5f,
                                 j * -terrain.gameObject.transform.up.y - 0.5f), Quaternion.identity);
                         break;
                     case 3:
                         mapConcrete[i, j] = Instantiate(teleport,
-                            new Vector3(i * terrain.gameObject.transform.right.x,
+                            new Vector3(i * terrain.gameObject.transform.right.x + 0.5f,
+                                j * -terrain.gameObject.transform.up.y - 0.5f), Quaternion.identity);
+                        break;
+                    case 4:
+                        mapConcrete[i, j] = Instantiate(pills,
+                            new Vector3(i * terrain.gameObject.transform.right.x + 0.5f,
                                 j * -terrain.gameObject.transform.up.y - 0.5f), Quaternion.identity);
                         break;
                 }
             }
-        }
-
-        _cam.orthographicSize = rows * terrain.transform.up.y / 2;
+        } 
+        _cam.orthographicSize = rows * terrain.transform.up.y / 2; 
         _cam.gameObject.transform.position = new Vector3(terrain.transform.right.x * columns / 2, -terrain.transform.up.y * rows / 2, -10);
     }
 

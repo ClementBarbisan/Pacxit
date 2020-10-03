@@ -168,6 +168,7 @@ MonoBehaviour:
   terrain: {fileID: 433666428450191207, guid: 269e1b9611ea3554488182ae3323189a, type: 3}
   teleport: {fileID: 8731448389970477266, guid: 61c74d03d03f033488369887c45eddef,
     type: 3}
+  pills: {fileID: 8493110308099764684, guid: b9ce9059d6feb65439bffb0de77b6392, type: 3}
   rows: 0
   columns: 0
 --- !u!20 &519420031
