@@ -74,7 +74,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.6603774, g: 0.06541474, b: 0.5820398, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 1
@@ -105,7 +105,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 500
+  MaxDistance: 509.15
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
@@ -190,7 +190,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -218,3 +218,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc62a57698a79a345b693c5f63ad1749, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  source: {fileID: 8898726486518168494}

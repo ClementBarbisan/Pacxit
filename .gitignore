@@ -2,3 +2,12 @@ Library/
 obj/
 .idea/
 Temp/
+Assets/Plugins/FMOD/
+Assets/AudioToolkit/
+Assets/Audio Manager/
+Assets/Audio Manager.meta
+Assets/AudioToolkit.meta
+Assets/Editor Default Resources.meta
+Assets/Editor Default Resources/FMOD.meta
+Assets/Gizmos/FMOD.meta
+Assets/Plugins/FMOD.meta

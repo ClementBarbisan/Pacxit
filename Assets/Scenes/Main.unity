@@ -131,7 +131,6 @@ GameObject:
   m_Component:
   - component: {fileID: 519420032}
   - component: {fileID: 519420031}
-  - component: {fileID: 519420029}
   - component: {fileID: 519420030}
   - component: {fileID: 519420034}
   m_Layer: 0
@@ -141,14 +140,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!81 &519420029
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 519420028}
-  m_Enabled: 1
 --- !u!114 &519420030
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -171,6 +162,8 @@ MonoBehaviour:
   pills: {fileID: 8493110308099764684, guid: b9ce9059d6feb65439bffb0de77b6392, type: 3}
   rows: 0
   columns: 0
+  ghostPos: []
+  playerPos: {x: 0, y: 0}
 --- !u!20 &519420031
 Camera:
   m_ObjectHideFlags: 0
@@ -245,3 +238,5 @@ MonoBehaviour:
   - {fileID: 6786048321605302459, guid: 1613cac5e1d0c104791867bc238efae4, type: 3}
   - {fileID: 6786048321605302459, guid: 1613cac5e1d0c104791867bc238efae4, type: 3}
   - {fileID: 6786048321605302459, guid: 1613cac5e1d0c104791867bc238efae4, type: 3}
+  playerPrefab: {fileID: 3730457910529558023, guid: 52953bb8146801f40b658077ab6e335e,
+    type: 3}

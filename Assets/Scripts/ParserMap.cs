@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
 
 public class ParserMap : MonoBehaviour
 {
@@ -20,10 +21,13 @@ public class ParserMap : MonoBehaviour
     [FormerlySerializedAs("_mapConcrete")] public GameObject[,] mapConcrete;
     [FormerlySerializedAs("_rows")] public int rows = 0;
     [FormerlySerializedAs("_columns")] public int columns = 0;
+    public List<Vector2Int> ghostPos;
+    public Vector2Int playerPos;
     private Camera _cam = null;
     private void Awake()
     {
         Instance = this;
+        ghostPos = new List<Vector2Int>();
         _cam = Camera.main;
         _mapDeserialize = File.ReadAllLines(Application.streamingAssetsPath + "/" + nameMap);
         rows = _mapDeserialize.Length;
@@ -63,18 +67,48 @@ public class ParserMap : MonoBehaviour
                                 j * -terrain.gameObject.transform.up.y - 0.5f), Quaternion.identity);
                         break;
                     case 3:
-                        mapConcrete[i, j] = Instantiate(teleport,
+                        ghostPos.Add(new Vector2Int(i, j));
+                        map[i, j] = 0;
+                        mapConcrete[i, j] = Instantiate(terrain,
                             new Vector3(i * terrain.gameObject.transform.right.x + 0.5f,
                                 j * -terrain.gameObject.transform.up.y - 0.5f), Quaternion.identity);
                         break;
                     case 4:
-                        mapConcrete[i, j] = Instantiate(pills,
+                        playerPos = new Vector2Int(i, j);
+                        map[i, j] = 0;
+                        mapConcrete[i, j] = Instantiate(terrain,
+                            new Vector3(i * terrain.gameObject.transform.right.x + 0.5f,
+                                j * -terrain.gameObject.transform.up.y - 0.5f), Quaternion.identity);
+                        break;
+                    case 5:
+                        mapConcrete[i, j] = Instantiate(teleport,
+                            new Vector3(i * terrain.gameObject.transform.right.x + 0.5f,
+                                j * -terrain.gameObject.transform.up.y - 0.5f), Quaternion.identity);
+                        break;
+                    case 6:
+                        map[i, j] = 0;
+                        mapConcrete[i, j] = Instantiate(terrain,
+                            new Vector3(i * terrain.gameObject.transform.right.x + 0.5f,
+                                j * -terrain.gameObject.transform.up.y - 0.5f), Quaternion.identity);
+                        Instantiate(pills,
                             new Vector3(i * terrain.gameObject.transform.right.x + 0.5f,
                                 j * -terrain.gameObject.transform.up.y - 0.5f), Quaternion.identity);
                         break;
                 }
             }
-        } 
+        }
+
+        int x = Random.Range(0, columns);
+        int y = Random.Range(0, rows);
+        while (ParserMap.Instance.map[x, y] != 0)
+        {
+            x = Random.Range(0, columns);
+            y = Random.Range(0, rows);
+        }
+
+        Instantiate(exit,
+            new Vector3(x * terrain.gameObject.transform.right.x + 0.5f, y * -terrain.gameObject.transform.up.y - 0.5f, -5),
+            Quaternion.identity);
         _cam.orthographicSize = rows * terrain.transform.up.y / 2; 
         _cam.gameObject.transform.position = new Vector3(terrain.transform.right.x * columns / 2, -terrain.transform.up.y * rows / 2, -10);
     }

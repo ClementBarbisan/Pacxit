@@ -8,33 +8,41 @@ public class GhostsManager : MonoBehaviour
 {
     public static GhostsManager Instance;
     [SerializeField] private List<GameObject> ghostPref;
+    [SerializeField] private GameObject playerPrefab;
     private List<Ghost> _ghosts;
 
     private AudioSource _source;
 
-    private Transform _trPlayer;
+    private Player _player;
     // Start is called before the first frame update
     private void Awake()
     {
         Instance = this;
         _source = FindObjectOfType<AudioSource>();
-        _trPlayer = FindObjectOfType<Player>().gameObject.transform;
+        Vector2 playerPos = ParserMap.Instance.mapConcrete[ParserMap.Instance.playerPos.x, ParserMap.Instance.playerPos.y].transform.position;
+        GameObject playerGo = Instantiate(playerPrefab, new Vector3(playerPos.x, playerPos.y, -5), Quaternion.identity);
+        _player = playerGo.GetComponent<Player>();
+        _player.column = ParserMap.Instance.playerPos.x;
+        _player.row = ParserMap.Instance.playerPos.y;
         _ghosts = new List<Ghost>();
-        for (int i = 0; i < ghostPref.Count; i++)
+        int index = 0;
+        for (int i = 0; i < ParserMap.Instance.ghostPos.Count; i++)
         {
             Vector3 pos = Vector3.zero;
-            int x = 0;
-            int y = 0;
-            while (pos == Vector3.zero)
-            {
-                x = Random.Range(0, ParserMap.Instance.columns);
-                y = Random.Range(0, ParserMap.Instance.rows);
-                if (ParserMap.Instance.map[x, y] == 0)
-                    pos = ParserMap.Instance.mapConcrete[x, y].transform.position;
-            }
+            int x = ParserMap.Instance.ghostPos[i].x;
+            int y = ParserMap.Instance.ghostPos[i].y;
+            pos = ParserMap.Instance.mapConcrete[x, y].transform.position;
             pos = new Vector3(pos.x, pos.y, -5);
-            GameObject go = Instantiate(ghostPref[i], pos, Quaternion.identity);
-            _ghosts.Add(go.GetComponent<Ghost>());
+            if (ghostPref.Count <= i)
+            {
+                Debug.LogWarning("Duplicate Ghosts!");
+            }
+            else
+            {
+                index = i;
+            }
+            GameObject ghostGo = Instantiate(ghostPref[index], pos, Quaternion.identity);
+            _ghosts.Add(ghostGo.GetComponent<Ghost>());
             _ghosts[_ghosts.Count - 1].column = x;
             _ghosts[_ghosts.Count - 1].row = y;
         }
