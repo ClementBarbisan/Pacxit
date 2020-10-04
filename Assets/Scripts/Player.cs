@@ -13,7 +13,7 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        row -= 1;
+        // row -= 1;
     }
 
     // Update is called once per frame
@@ -44,12 +44,7 @@ public class Player : MonoBehaviour
             row += _currentDirection.y;
         }
     }
-
-    private void OnAudioFilterRead(float[] data, int channels)
-    {
-        // throw new NotImplementedException();
-    }
-
+    
     private void OnTriggerStay2D(Collider2D other)
     {
         if (other.CompareTag("pills"))

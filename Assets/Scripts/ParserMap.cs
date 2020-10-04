@@ -23,6 +23,7 @@ public class ParserMap : MonoBehaviour
     [FormerlySerializedAs("_columns")] public int columns = 0;
     public List<Vector2Int> ghostPos;
     public Vector2Int playerPos;
+    public GameObject finish;
     private Camera _cam = null;
     private void Awake()
     {
@@ -107,7 +108,7 @@ public class ParserMap : MonoBehaviour
             y = Random.Range(0, rows);
         }
 
-        Instantiate(exit,
+        finish = Instantiate(exit,
             new Vector3(x * terrain.gameObject.transform.right.x + 0.5f, y * -terrain.gameObject.transform.up.y - 0.5f, -5),
             Quaternion.identity);
         _cam.orthographicSize = rows * terrain.transform.up.y / 2; 
