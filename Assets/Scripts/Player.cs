@@ -2,14 +2,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
     public int column = 0;
     public int row = 1;
-    private int movements = 0;
     Vector2Int _currentDirection = Vector2Int.up;
     Vector2Int _nextPosition = Vector2Int.zero;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -35,8 +36,11 @@ public class Player : MonoBehaviour
         {
             column += _nextPosition.x;
             row += _nextPosition.y;
-            _currentDirection = _nextPosition;
-            movements++;
+            if (_currentDirection != _nextPosition)
+            {
+                _currentDirection = _nextPosition;
+                Score.movements++;
+            }
         }
         else if (ParserMap.Instance.map[column + _currentDirection.x, row + _currentDirection.y] == 0)
         {
@@ -53,10 +57,15 @@ public class Player : MonoBehaviour
             GhostsManager.Instance.StopAllGhosts();
         }
         else if (other.CompareTag("Finish"))
-            Destroy(this.gameObject);
-        //load a new scene to continue
+        {
+            Score.nbLevels++;
+            SceneManager.LoadScene("Main");
+        }
         else if (other.CompareTag("enemy"))
-            Destroy(this.gameObject);
-        //load a new scene to stop
+        {
+            Score.Reset();
+            GhostsManager.Instance.buttonRestart.SetActive(true);
+            Destroy(gameObject);
+        }
     }
 }

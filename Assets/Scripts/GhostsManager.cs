@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -14,7 +15,7 @@ public class GhostsManager : MonoBehaviour
 
     private AudioSource _source;
 
-    private Player _player;
+    public Player player;
     
     private float _sampling_frequency = 48000;
 
@@ -31,6 +32,10 @@ public class GhostsManager : MonoBehaviour
     private AudioHighPassFilter _audioHighPassFilter;
     private AudioDistortionFilter _distortion;
 
+    public GameObject buttonRestart;
+
+    [SerializeField] private TextMeshProUGUI levels;
+    [SerializeField] private TextMeshProUGUI score;
     // Start is called before the first frame update
     private void Awake()
     {
@@ -38,9 +43,9 @@ public class GhostsManager : MonoBehaviour
         _source = GetComponent<AudioSource>();
         Vector2 playerPos = ParserMap.Instance.mapConcrete[ParserMap.Instance.playerPos.x, ParserMap.Instance.playerPos.y].transform.position;
         GameObject playerGo = Instantiate(playerPrefab, new Vector3(playerPos.x, playerPos.y, -5), Quaternion.identity);
-        _player = playerGo.GetComponent<Player>();
-        _player.column = ParserMap.Instance.playerPos.x;
-        _player.row = ParserMap.Instance.playerPos.y;
+        player = playerGo.GetComponent<Player>();
+        player.column = ParserMap.Instance.playerPos.x;
+        player.row = ParserMap.Instance.playerPos.y;
         _ghosts = new List<Ghost>();
         int index = 0;
         for (int i = 0; i < ParserMap.Instance.ghostPos.Count; i++)
@@ -117,15 +122,17 @@ public class GhostsManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        tmpDistancePlayer = Vector3.Distance(_player.transform.position / 2f,
+        tmpDistancePlayer = Vector3.Distance(player.transform.position / 2f,
             ParserMap.Instance.finish.transform.position / 2f);
         _distortion.distortionLevel = Vector3.Distance(_ghosts[3].gameObject.transform.position.normalized * 1.5f,
             ParserMap.Instance.finish.transform.position.normalized * 1.5f);
         _audioHighPassFilter.cutoffFrequency = _distancesGhosts[0] * 250f;
-        _source.volume = 1f / Vector3.Distance(_player.transform.position / 2f,
+        _source.volume = 1f / Vector3.Distance(player.transform.position / 2f,
             ParserMap.Instance.finish.transform.position / 2f);
         for (int i= 0; i < _ghosts.Count; i++)
             _distancesGhosts[i] = Vector3.Distance(_ghosts[i].gameObject.transform.position,
                 ParserMap.Instance.finish.gameObject.transform.position);
+        levels.text = "Level : " + Score.nbLevels;
+        score.text = "Score : " + Score.GetScore();
     }
 }
