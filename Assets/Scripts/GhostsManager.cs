@@ -9,11 +9,28 @@ public class GhostsManager : MonoBehaviour
     public static GhostsManager Instance;
     [SerializeField] private List<GameObject> ghostPref;
     [SerializeField] private GameObject playerPrefab;
+    private float[] _distancesGhosts;
     private List<Ghost> _ghosts;
 
     private AudioSource _source;
 
     private Player _player;
+    
+    private float _sampling_frequency = 48000;
+
+    [Range(0f, 1f)]
+    public float noiseRatio = 0.5f;
+
+    public float frequency = 440f;
+
+    private float _increment;
+    private float _phase;
+
+    private float tmpDistancePlayer;
+    System.Random rand = new System.Random();
+    private AudioHighPassFilter _audioHighPassFilter;
+    private AudioDistortionFilter _distortion;
+
     // Start is called before the first frame update
     private void Awake()
     {
@@ -46,62 +63,49 @@ public class GhostsManager : MonoBehaviour
             _ghosts[_ghosts.Count - 1].column = x;
             _ghosts[_ghosts.Count - 1].row = y;
         }
-
+        _distancesGhosts = new float[_ghosts.Count];
     }
-    public double bpm = 140.0F;
-    public float gain = 0.5F;
-    public int signatureHi = 4;
-    public int signatureLo = 4;
-
-    private double nextTick = 0.0F;
-    private float amp = 0.0F;
-    private float phase = 0.0F;
-    private double sampleRate = 0.0F;
-    private int accent;
-    private bool running = false;
-
+    
     void Start()
     {
-        accent = signatureHi;
-        double startTick = AudioSettings.dspTime;
-        sampleRate = AudioSettings.outputSampleRate;
-        nextTick = startTick * sampleRate;
-        running = true;
+        _sampling_frequency = AudioSettings.outputSampleRate;
+        _audioHighPassFilter = GetComponent<AudioHighPassFilter>();
+        _distortion = GetComponent<AudioDistortionFilter>();
     }
     void OnAudioFilterRead(float[] data, int channels)
     {
-        if (!running)
-            return;
+        float tonalPart = 0;
+        float noisePart = 0;
+        // update increment in case frequency has changed
+        _increment = frequency * 2f * Mathf.PI / _sampling_frequency;
 
-        double samplesPerTick = sampleRate * 60.0F / bpm * 4.0F / signatureLo;
-        double sample = AudioSettings.dspTime * sampleRate;
-        int dataLen = data.Length / channels;
-
-        int n = 0;
-        while (n < dataLen)
+        for (int i = 0; i < data.Length; i++)
         {
-            float x = gain * amp * Mathf.Sin(phase);
-            int i = 0;
-            while (i < channels)
+            
+            //noise
+            noisePart = noiseRatio * (float)(rand.NextDouble() * _distancesGhosts[1] * 2.0);
+
+            _phase = _phase + _increment;
+            if (_phase > 2 * Mathf.PI) _phase = 0;
+
+
+            //tone
+            tonalPart = (1f - noiseRatio) * (float)(_distancesGhosts[2] * Mathf.Sin(_phase) / 10f);
+
+            //together
+            data[i] += noisePart / 25 + tonalPart;
+
+            // if we have stereo, we copy the mono data to each channel
+            if (channels == 2)
             {
-                data[n * channels + i] += x;
+                data[i + 1] = data[i];
                 i++;
             }
-            while (sample + n >= nextTick)
-            {
-                nextTick += samplesPerTick;
-                amp = 1.0F;
-                if (++accent > signatureHi)
-                {
-                    accent = 1;
-                    amp *= 2.0F;
-                }
-                Debug.Log("Tick: " + accent + "/" + signatureHi);
-            }
-            phase += amp * 0.3F;
-            amp *= 0.993F;
-            n++;
+
+            
         }
+
+       
     }
     public void StopAllGhosts()
     {
@@ -113,8 +117,15 @@ public class GhostsManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        _source.volume = 1f / (Vector3.Distance(_player.transform.position / 20f,
-            ParserMap.Instance.finish.transform.position / 20f) * Vector3.Distance(_player.transform.position / 20f,
-            ParserMap.Instance.finish.transform.position / 20f));
+        tmpDistancePlayer = Vector3.Distance(_player.transform.position / 2f,
+            ParserMap.Instance.finish.transform.position / 2f);
+        _distortion.distortionLevel = Vector3.Distance(_ghosts[3].gameObject.transform.position.normalized * 1.5f,
+            ParserMap.Instance.finish.transform.position.normalized * 1.5f);
+        _audioHighPassFilter.cutoffFrequency = _distancesGhosts[0] * 250f;
+        _source.volume = 1f / Vector3.Distance(_player.transform.position / 2f,
+            ParserMap.Instance.finish.transform.position / 2f);
+        for (int i= 0; i < _ghosts.Count; i++)
+            _distancesGhosts[i] = Vector3.Distance(_ghosts[i].gameObject.transform.position,
+                ParserMap.Instance.finish.gameObject.transform.position);
     }
 }
