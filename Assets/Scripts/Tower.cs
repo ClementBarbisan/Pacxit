@@ -22,7 +22,7 @@ public class Tower : Ghost
         if (Vector3.Distance(ParserMap.Instance.mapConcrete[column, row].transform.position, transform.position) >
             0.01f)
             return;
-        if (ParserMap.Instance.map[column + _oldColumn, row + _oldRow] == 0)
+        if (ParserMap.Instance.map[column + _oldColumn, row + _oldRow] == 0 && Random.Range(0, 10) < 9)
         {
             column += _oldColumn;
             row += _oldRow;

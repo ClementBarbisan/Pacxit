@@ -7,6 +7,7 @@ public class Player : MonoBehaviour
 {
     public int column = 0;
     public int row = 1;
+    private int movements = 0;
     Vector2Int _currentDirection = Vector2Int.up;
     Vector2Int _nextPosition = Vector2Int.zero;
     // Start is called before the first frame update
@@ -35,6 +36,7 @@ public class Player : MonoBehaviour
             column += _nextPosition.x;
             row += _nextPosition.y;
             _currentDirection = _nextPosition;
+            movements++;
         }
         else if (ParserMap.Instance.map[column + _currentDirection.x, row + _currentDirection.y] == 0)
         {
@@ -43,15 +45,23 @@ public class Player : MonoBehaviour
         }
     }
 
+    private void OnAudioFilterRead(float[] data, int channels)
+    {
+        // throw new NotImplementedException();
+    }
+
     private void OnTriggerStay2D(Collider2D other)
     {
         if (other.CompareTag("pills"))
+        {
+            Destroy(other.gameObject);
             GhostsManager.Instance.StopAllGhosts();
+        }
         else if (other.CompareTag("Finish"))
-            Destroy(this);
+            Destroy(this.gameObject);
         //load a new scene to continue
         else if (other.CompareTag("enemy"))
-            Destroy(this);
+            Destroy(this.gameObject);
         //load a new scene to stop
     }
 }

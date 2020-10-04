@@ -54,45 +54,46 @@ public class ParserMap : MonoBehaviour
                     case 0:
                         mapConcrete[i, j] = Instantiate(terrain,
                             new Vector3(i * terrain.gameObject.transform.right.x + 0.5f,
-                                j * -terrain.gameObject.transform.up.y - 0.5f), Quaternion.identity);
+                                j * -terrain.gameObject.transform.up.y - 0.5f, -5), Quaternion.identity);
                         break;
                     case 1:
                         mapConcrete[i, j] = Instantiate(wall,
                             new Vector3(i * terrain.gameObject.transform.right.x + 0.5f,
-                                j * -terrain.gameObject.transform.up.y - 0.5f), Quaternion.identity);
+                                j * -terrain.gameObject.transform.up.y - 0.5f, -5), Quaternion.identity);
                         break;
                     case 2:
                         mapConcrete[i, j] = Instantiate(empty,
                             new Vector3(i * terrain.gameObject.transform.right.x + 0.5f,
-                                j * -terrain.gameObject.transform.up.y - 0.5f), Quaternion.identity);
+                                j * -terrain.gameObject.transform.up.y - 0.5f, -5), Quaternion.identity);
                         break;
                     case 3:
                         ghostPos.Add(new Vector2Int(i, j));
                         map[i, j] = 0;
                         mapConcrete[i, j] = Instantiate(terrain,
                             new Vector3(i * terrain.gameObject.transform.right.x + 0.5f,
-                                j * -terrain.gameObject.transform.up.y - 0.5f), Quaternion.identity);
+                                j * -terrain.gameObject.transform.up.y - 0.5f, -5), Quaternion.identity);
                         break;
                     case 4:
                         playerPos = new Vector2Int(i, j);
                         map[i, j] = 0;
                         mapConcrete[i, j] = Instantiate(terrain,
                             new Vector3(i * terrain.gameObject.transform.right.x + 0.5f,
-                                j * -terrain.gameObject.transform.up.y - 0.5f), Quaternion.identity);
+                                j * -terrain.gameObject.transform.up.y - 0.5f, -5), Quaternion.identity);
                         break;
+                    
                     case 5:
-                        mapConcrete[i, j] = Instantiate(teleport,
-                            new Vector3(i * terrain.gameObject.transform.right.x + 0.5f,
-                                j * -terrain.gameObject.transform.up.y - 0.5f), Quaternion.identity);
-                        break;
-                    case 6:
                         map[i, j] = 0;
                         mapConcrete[i, j] = Instantiate(terrain,
                             new Vector3(i * terrain.gameObject.transform.right.x + 0.5f,
-                                j * -terrain.gameObject.transform.up.y - 0.5f), Quaternion.identity);
+                                j * -terrain.gameObject.transform.up.y - 0.5f, -5), Quaternion.identity);
                         Instantiate(pills,
                             new Vector3(i * terrain.gameObject.transform.right.x + 0.5f,
-                                j * -terrain.gameObject.transform.up.y - 0.5f), Quaternion.identity);
+                                j * -terrain.gameObject.transform.up.y - 0.5f, -5), Quaternion.identity);
+                        break;
+                    case 6:
+                        mapConcrete[i, j] = Instantiate(teleport,
+                            new Vector3(i * terrain.gameObject.transform.right.x + 0.5f,
+                                j * -terrain.gameObject.transform.up.y - 0.5f, -5), Quaternion.identity);
                         break;
                 }
             }
@@ -100,7 +101,7 @@ public class ParserMap : MonoBehaviour
 
         int x = Random.Range(0, columns);
         int y = Random.Range(0, rows);
-        while (ParserMap.Instance.map[x, y] != 0)
+        while (map[x, y] != 0 && new Vector2Int(x, y) != playerPos)
         {
             x = Random.Range(0, columns);
             y = Random.Range(0, rows);

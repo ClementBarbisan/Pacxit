@@ -58,6 +58,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Scripts\Finish.cs" />
      <Compile Include="Assets\Scripts\Foul.cs" />
      <Compile Include="Assets\Scripts\Ghost.cs" />
      <Compile Include="Assets\Scripts\GhostsManager.cs" />
@@ -68,7 +69,6 @@
      <Compile Include="Assets\Scripts\Tower.cs" />
      <Compile Include="Assets\Scripts\TowerX.cs" />
      <Compile Include="Assets\Scripts\TowerY.cs" />
-     <Compile Include="Assets\Scripts\finish.cs" />
      <None Include="Assets\StreamingAssets\map.txt" />
  <Reference Include="Unity.Timeline.Editor">
  <HintPath>D:/Pacxit/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
