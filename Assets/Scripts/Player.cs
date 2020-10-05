@@ -65,6 +65,7 @@ public class Player : MonoBehaviour
         {
             Score.Reset();
             GhostsManager.Instance.buttonRestart.SetActive(true);
+            GhostsManager.Instance.StopAllFiltersEnd();
             Destroy(gameObject);
         }
     }

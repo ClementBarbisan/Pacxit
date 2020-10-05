@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 public class GhostsManager : MonoBehaviour
@@ -36,7 +37,7 @@ public class GhostsManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI levels;
     [SerializeField] private TextMeshProUGUI score;
     private Coroutine _stopFilters = null;
-    private bool _play = true;
+    [FormerlySerializedAs("_play")] public bool play = true;
     private float[] _randNoise;
 
     [SerializeField] private float timeStopGhosts = 2;
@@ -127,21 +128,22 @@ public class GhostsManager : MonoBehaviour
 
 
             //tone
-            tonalPart = (1f - noiseRatio) * (float)(_distancesGhosts[2] * (Mathf.Sin(_phase) * Mathf.Cos(_phase)) / 10f);
+            tonalPart = (1f - noiseRatio) * (float)(_distancesGhosts[2] * (Mathf.Sin(_phase) * Mathf.Cos(_phase)));
 
             //together
-            if (_play)
+            if (play)
             {
                 data[i] += tonalPart / 20f;
-                data[i] += noisePart / 15f;
+                data[i] += noisePart / 5f;
+                data[i] /= tmpDistancePlayer;
             }
 
-            // if we have stereo, we copy the mono data to each channel
-            if (channels == 2)
-            {
-                data[i + 1] = data[i];
-                i++;
-            }
+            // // if we have stereo, we copy the mono data to each channel
+            // if (channels == 2)
+            // {
+            //     data[i + 1] = data[i];
+            //     i++;
+            // }
 
             
         }
@@ -151,12 +153,21 @@ public class GhostsManager : MonoBehaviour
 
     IEnumerator StopAllFilters()
     {
-        _play = false;
+        play = false;
         _source.pitch = 1f;
+        _source.volume = 1f;
         _distortion.enabled = false;
         yield return new WaitForSeconds(timeStopGhosts);
-        _play = true;
+        play = true;
         _distortion.enabled = true;
+    }
+
+    public void StopAllFiltersEnd()
+    {
+        play = false;
+        _source.pitch = 1f;
+        _source.volume = 1f;
+        _distortion.enabled = false;
     }
 
     public void StopAllGhosts()
@@ -177,14 +188,14 @@ public class GhostsManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        tmpDistancePlayer = Vector3.Distance(player.transform.position / 2f,
-            ParserMap.Instance.finish.transform.position / 2f);
+        if (!play)
+            return;
+        tmpDistancePlayer = Vector3.Distance(player.transform.position / 2.5f,
+            ParserMap.Instance.finish.transform.position / 2.5f);
         _distortion.distortionLevel = Vector3.Distance(_ghosts[3].gameObject.transform.position.normalized * 1.2f,
             ParserMap.Instance.finish.transform.position.normalized * 1.2f);
-        _source.volume = 1f / Vector3.Distance(player.transform.position / 2.5f,
-            ParserMap.Instance.finish.transform.position / 2.5f);
-        if (_play)
-            _source.pitch = Mathf.Clamp(1f / Vector3.Distance(_ghosts[0].transform.position / 2.5f,
+        _source.volume = 1f / tmpDistancePlayer;
+        _source.pitch = Mathf.Clamp(1f / Vector3.Distance(_ghosts[0].transform.position / 2.5f,
             ParserMap.Instance.finish.transform.position / 2.5f), 0, 1f);
         for (int i= 0; i < _ghosts.Count; i++)
             _distancesGhosts[i] = Vector3.Distance(_ghosts[i].gameObject.transform.position,

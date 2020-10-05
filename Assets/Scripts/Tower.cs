@@ -19,7 +19,7 @@ public class Tower : Ghost
     // Update is called once per frame
     void Update()
     {
-        if (stop)
+        if (stop || !GhostsManager.Instance.play)
             return;
         base.Update();
         if (Vector3.Distance(ParserMap.Instance.mapConcrete[column, row].transform.position, transform.position) >
