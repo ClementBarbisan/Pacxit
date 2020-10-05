@@ -111,7 +111,10 @@ public class ParserMap : MonoBehaviour
         finish = Instantiate(exit,
             new Vector3(x * terrain.gameObject.transform.right.x + 0.5f, y * -terrain.gameObject.transform.up.y - 0.5f, -5),
             Quaternion.identity);
-        _cam.orthographicSize = rows * terrain.transform.up.y / 2; 
+        if (rows > columns)
+            _cam.orthographicSize = rows * terrain.transform.up.y / 2; 
+        else
+            _cam.orthographicSize = columns * terrain.transform.right.x / 2 - 3; 
         _cam.gameObject.transform.position = new Vector3(terrain.transform.right.x * columns / 2, -terrain.transform.up.y * rows / 2, -10);
     }
 

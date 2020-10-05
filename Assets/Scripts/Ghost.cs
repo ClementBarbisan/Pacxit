@@ -6,17 +6,16 @@ using UnityEngine;
 public class Ghost : MonoBehaviour
 {
     public bool stop = false;
-    public float freezeTime = 2f;
     private Coroutine stopForAwhile = null;
     public int column = 0;
     public int row = 0;
-    IEnumerator StopAsync()
+    IEnumerator StopAsync(float freezeTime)
     {
         yield return new WaitForSeconds(freezeTime);
         stop = false;
     }
 
-    public void Stop()
+    public void Stop(float time)
     {
         stop = true;
         if (stopForAwhile != null)
@@ -25,7 +24,7 @@ public class Ghost : MonoBehaviour
             stopForAwhile = null;
         }
 
-        stopForAwhile = StartCoroutine(StopAsync());
+        stopForAwhile = StartCoroutine(StopAsync(time));
     }
 
     protected void Update()

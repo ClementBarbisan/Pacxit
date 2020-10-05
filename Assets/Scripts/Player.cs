@@ -8,7 +8,7 @@ public class Player : MonoBehaviour
 {
     public int column = 0;
     public int row = 1;
-    Vector2Int _currentDirection = Vector2Int.up;
+    Vector2Int _currentDirection = Vector2Int.zero;
     Vector2Int _nextPosition = Vector2Int.zero;
 
     // Start is called before the first frame update

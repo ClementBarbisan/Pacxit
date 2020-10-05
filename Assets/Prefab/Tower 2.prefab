@@ -96,10 +96,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stop: 0
-  freezeTime: 2
   column: 0
   row: 0
-  chasingDistance: 5
+  chasingDistance: 4
 --- !u!61 &2948393312624726144
 BoxCollider2D:
   m_ObjectHideFlags: 0

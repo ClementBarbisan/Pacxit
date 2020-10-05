@@ -30,12 +30,17 @@ public class GhostsManager : MonoBehaviour
     private float tmpDistancePlayer;
     System.Random rand = new System.Random();
     private AudioHighPassFilter _audioHighPassFilter;
+    private AudioLowPassFilter _audioLowPassFilter;
     private AudioDistortionFilter _distortion;
 
     public GameObject buttonRestart;
 
     [SerializeField] private TextMeshProUGUI levels;
     [SerializeField] private TextMeshProUGUI score;
+    private Coroutine _stopFilters = null;
+    private bool _play = true;
+
+    [SerializeField] private float timeStopGhosts = 2;
     // Start is called before the first frame update
     private void Awake()
     {
@@ -75,6 +80,7 @@ public class GhostsManager : MonoBehaviour
     {
         _sampling_frequency = AudioSettings.outputSampleRate;
         _audioHighPassFilter = GetComponent<AudioHighPassFilter>();
+        _audioLowPassFilter = GetComponent<AudioLowPassFilter>();
         _distortion = GetComponent<AudioDistortionFilter>();
     }
     void OnAudioFilterRead(float[] data, int channels)
@@ -88,7 +94,7 @@ public class GhostsManager : MonoBehaviour
         {
             
             //noise
-            noisePart = noiseRatio * (float)(rand.NextDouble() * _distancesGhosts[1] * 2.0);
+            noisePart = noiseRatio * (float)(rand.NextDouble() * _distancesGhosts[1]);
 
             _phase = _phase + _increment;
             if (_phase > 2 * Mathf.PI) _phase = 0;
@@ -98,7 +104,9 @@ public class GhostsManager : MonoBehaviour
             tonalPart = (1f - noiseRatio) * (float)(_distancesGhosts[2] * Mathf.Sin(_phase) / 10f);
 
             //together
-            data[i] += noisePart / 25 + tonalPart;
+            if (_play)
+                data[i] += tonalPart / 2.5f;
+            // data[i] += noisePart / 30;
 
             // if we have stereo, we copy the mono data to each channel
             if (channels == 2)
@@ -112,10 +120,32 @@ public class GhostsManager : MonoBehaviour
 
        
     }
+
+    IEnumerator StopAllFilters()
+    {
+        _play = false;
+        _distortion.enabled = false;
+        _audioHighPassFilter.enabled = false;
+        _audioLowPassFilter.enabled = false;
+        yield return new WaitForSeconds(timeStopGhosts);
+        _play = true;
+        _distortion.enabled = true;
+        _audioHighPassFilter.enabled = true;
+        _audioLowPassFilter.enabled = true;
+    }
+
     public void StopAllGhosts()
     {
+        if (_stopFilters != null)
+        {
+            StopCoroutine(_stopFilters);
+            _stopFilters = null;
+        }
+
+        _stopFilters = StartCoroutine(StopAllFilters());
         for (int i = 0; i < _ghosts.Count; i++)
-            _ghosts[i].Stop();
+            _ghosts[i].Stop(timeStopGhosts);
+        
     }
 
 
@@ -124,11 +154,12 @@ public class GhostsManager : MonoBehaviour
     {
         tmpDistancePlayer = Vector3.Distance(player.transform.position / 2f,
             ParserMap.Instance.finish.transform.position / 2f);
-        _distortion.distortionLevel = Vector3.Distance(_ghosts[3].gameObject.transform.position.normalized * 1.5f,
-            ParserMap.Instance.finish.transform.position.normalized * 1.5f);
-        _audioHighPassFilter.cutoffFrequency = _distancesGhosts[0] * 250f;
-        _source.volume = 1f / Vector3.Distance(player.transform.position / 2f,
-            ParserMap.Instance.finish.transform.position / 2f);
+        _distortion.distortionLevel = Vector3.Distance(_ghosts[3].gameObject.transform.position.normalized * 1.2f,
+            ParserMap.Instance.finish.transform.position.normalized * 1.2f);
+        _audioHighPassFilter.cutoffFrequency = 7500 - _distancesGhosts[0] * 250f;
+        _audioLowPassFilter.cutoffFrequency = 6500 - _distancesGhosts[1] * 250f;
+        _source.volume = 1f / Vector3.Distance(player.transform.position / 2.5f,
+            ParserMap.Instance.finish.transform.position / 2.5f);
         for (int i= 0; i < _ghosts.Count; i++)
             _distancesGhosts[i] = Vector3.Distance(_ghosts[i].gameObject.transform.position,
                 ParserMap.Instance.finish.gameObject.transform.position);
