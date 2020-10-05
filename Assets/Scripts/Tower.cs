@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Tower : Ghost
 {
-   private int _oldColumn;
+    private int _oldColumn;
     private int _oldRow;
 
     [SerializeField]
