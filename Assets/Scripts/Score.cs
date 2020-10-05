@@ -9,7 +9,7 @@ public static class Score
 
     public static int GetScore()
     {
-        return (10 * nbLevels - movements);
+        return (25 * nbLevels - movements);
     }
 
     public static void Reset()
