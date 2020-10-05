@@ -20,7 +20,7 @@ public class GhostsManager : MonoBehaviour
     private float _sampling_frequency = 48000;
 
     [Range(0f, 1f)]
-    public float noiseRatio = 0.5f;
+    public float noiseRatio = 0.1f;
 
     public float frequency = 440f;
 
@@ -29,8 +29,6 @@ public class GhostsManager : MonoBehaviour
 
     private float tmpDistancePlayer;
     System.Random rand = new System.Random();
-    private AudioHighPassFilter _audioHighPassFilter;
-    private AudioLowPassFilter _audioLowPassFilter;
     private AudioDistortionFilter _distortion;
 
     public GameObject buttonRestart;
@@ -39,12 +37,17 @@ public class GhostsManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI score;
     private Coroutine _stopFilters = null;
     private bool _play = true;
+    private float[] _randNoise;
 
     [SerializeField] private float timeStopGhosts = 2;
     // Start is called before the first frame update
     private void Awake()
     {
         Instance = this;
+        _randNoise = new float[44100];
+        for (int j = 0; j < _randNoise.Length; ++j) {
+            _randNoise[j] = Random.Range(0f, 1f);
+        }
         _source = GetComponent<AudioSource>();
         Vector2 playerPos = ParserMap.Instance.mapConcrete[ParserMap.Instance.playerPos.x, ParserMap.Instance.playerPos.y].transform.position;
         GameObject playerGo = Instantiate(playerPrefab, new Vector3(playerPos.x, playerPos.y, -5), Quaternion.identity);
@@ -79,8 +82,6 @@ public class GhostsManager : MonoBehaviour
     void Start()
     {
         _sampling_frequency = AudioSettings.outputSampleRate;
-        _audioHighPassFilter = GetComponent<AudioHighPassFilter>();
-        _audioLowPassFilter = GetComponent<AudioLowPassFilter>();
         _distortion = GetComponent<AudioDistortionFilter>();
     }
     void OnAudioFilterRead(float[] data, int channels)
@@ -94,19 +95,46 @@ public class GhostsManager : MonoBehaviour
         {
             
             //noise
-            noisePart = noiseRatio * (float)(rand.NextDouble() * _distancesGhosts[1]);
+
+            float fade(float t) {
+                return t*t*t*(t*(t*6.0f - 15.0f) + 10.0f);
+            }
+
+            float grad(float p) 
+            {
+                
+                float v =  _randNoise[Mathf.FloorToInt(p) % _randNoise.Length];
+                return v > 0.5f ? 1.0f : -1.0f;
+            }
+
+            float noise(float p) {
+                float p0 = Mathf.Floor(p);
+                float p1 = p0 + 1.0f;
+
+                float t = p - p0;
+                float fade_t = fade(t);
+
+                float g0 = grad(p0);
+                float g1 = grad(p1);
+
+                return (1.0f - fade_t)*g0*(p - p0) + fade_t*g1*(p - p1);
+            }
+
+            noisePart = noiseRatio * noise(_distancesGhosts[1]) * _distancesGhosts[1];
 
             _phase = _phase + _increment;
             if (_phase > 2 * Mathf.PI) _phase = 0;
 
 
             //tone
-            tonalPart = (1f - noiseRatio) * (float)(_distancesGhosts[2] * Mathf.Sin(_phase) / 10f);
+            tonalPart = (1f - noiseRatio) * (float)(_distancesGhosts[2] * (Mathf.Sin(_phase) * Mathf.Cos(_phase)) / 10f);
 
             //together
             if (_play)
-                data[i] += tonalPart / 2.5f;
-            // data[i] += noisePart / 30;
+            {
+                data[i] += tonalPart / 20f;
+                data[i] += noisePart / 15f;
+            }
 
             // if we have stereo, we copy the mono data to each channel
             if (channels == 2)
@@ -124,14 +152,11 @@ public class GhostsManager : MonoBehaviour
     IEnumerator StopAllFilters()
     {
         _play = false;
+        _source.pitch = 1f;
         _distortion.enabled = false;
-        _audioHighPassFilter.enabled = false;
-        _audioLowPassFilter.enabled = false;
         yield return new WaitForSeconds(timeStopGhosts);
         _play = true;
         _distortion.enabled = true;
-        _audioHighPassFilter.enabled = true;
-        _audioLowPassFilter.enabled = true;
     }
 
     public void StopAllGhosts()
@@ -156,10 +181,11 @@ public class GhostsManager : MonoBehaviour
             ParserMap.Instance.finish.transform.position / 2f);
         _distortion.distortionLevel = Vector3.Distance(_ghosts[3].gameObject.transform.position.normalized * 1.2f,
             ParserMap.Instance.finish.transform.position.normalized * 1.2f);
-        _audioHighPassFilter.cutoffFrequency = 7500 - _distancesGhosts[0] * 250f;
-        _audioLowPassFilter.cutoffFrequency = 6500 - _distancesGhosts[1] * 250f;
         _source.volume = 1f / Vector3.Distance(player.transform.position / 2.5f,
             ParserMap.Instance.finish.transform.position / 2.5f);
+        if (_play)
+            _source.pitch = Mathf.Clamp(1f / Vector3.Distance(_ghosts[0].transform.position / 2.5f,
+            ParserMap.Instance.finish.transform.position / 2.5f), 0, 1f);
         for (int i= 0; i < _ghosts.Count; i++)
             _distancesGhosts[i] = Vector3.Distance(_ghosts[i].gameObject.transform.position,
                 ParserMap.Instance.finish.gameObject.transform.position);
