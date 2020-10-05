@@ -155,7 +155,6 @@ public class GhostsManager : MonoBehaviour
     {
         play = false;
         _source.pitch = 1f;
-        _source.volume = 1f;
         _distortion.enabled = false;
         yield return new WaitForSeconds(timeStopGhosts);
         play = true;
@@ -188,13 +187,15 @@ public class GhostsManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!play)
+        if (player == null)
             return;
         tmpDistancePlayer = Vector3.Distance(player.transform.position / 2.5f,
             ParserMap.Instance.finish.transform.position / 2.5f);
+        _source.volume = 1f / tmpDistancePlayer;
+        if (!play)
+            return;
         _distortion.distortionLevel = Vector3.Distance(_ghosts[3].gameObject.transform.position.normalized * 1.2f,
             ParserMap.Instance.finish.transform.position.normalized * 1.2f);
-        _source.volume = 1f / tmpDistancePlayer;
         _source.pitch = Mathf.Clamp(1f / Vector3.Distance(_ghosts[0].transform.position / 2.5f,
             ParserMap.Instance.finish.transform.position / 2.5f), 0, 1f);
         for (int i= 0; i < _ghosts.Count; i++)
