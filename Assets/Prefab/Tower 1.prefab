@@ -98,7 +98,7 @@ MonoBehaviour:
   stop: 0
   column: 0
   row: 0
-  chasingDistance: 0
+  chasingDistance: 2
 --- !u!61 &2948393312624726144
 BoxCollider2D:
   m_ObjectHideFlags: 0

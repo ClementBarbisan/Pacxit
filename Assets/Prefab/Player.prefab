@@ -145,7 +145,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   column: 0
-  row: 1
+  row: 0
 --- !u!81 &5139403484921463363
 AudioListener:
   m_ObjectHideFlags: 0
