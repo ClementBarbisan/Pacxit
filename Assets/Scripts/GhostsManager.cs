@@ -194,10 +194,10 @@ public class GhostsManager : MonoBehaviour
         _source.volume = 1f / tmpDistancePlayer;
         if (!play)
             return;
-        _distortion.distortionLevel = Vector3.Distance(_ghosts[3].gameObject.transform.position.normalized * 1.2f,
-            ParserMap.Instance.finish.transform.position.normalized * 1.2f);
-        _source.pitch = Mathf.Clamp(1f / Vector3.Distance(_ghosts[0].transform.position / 2.5f,
-            ParserMap.Instance.finish.transform.position / 2.5f), 0, 1f);
+        _distortion.distortionLevel = Vector3.Distance(_ghosts[3].gameObject.transform.position.normalized * 2.5f,
+            ParserMap.Instance.finish.transform.position.normalized * 2.5f);
+        _source.pitch = Mathf.Clamp(1f / Vector3.Distance(_ghosts[0].transform.position / 7.5f,
+            ParserMap.Instance.finish.transform.position / 7.5f), 0, 1f);
         for (int i= 0; i < _ghosts.Count; i++)
             _distancesGhosts[i] = Vector3.Distance(_ghosts[i].gameObject.transform.position,
                 ParserMap.Instance.finish.gameObject.transform.position);
