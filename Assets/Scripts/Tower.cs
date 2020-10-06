@@ -9,6 +9,8 @@ public class Tower : Ghost
 
     [SerializeField]
     private float chasingDistance;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -22,9 +24,12 @@ public class Tower : Ghost
         if (stop || !GhostsManager.Instance.play)
             return;
         base.Update();
-        if (Vector3.Distance(ParserMap.Instance.mapConcrete[column, row].transform.position, transform.position) >
-            0.01f)
+        float distanceToGo = Vector3.Distance(ParserMap.Instance.mapConcrete[column, row].transform.position,
+            transform.position);
+        if (distanceToGo > 0.01f)
+        {
             return;
+        }
         if (Vector3.Distance(transform.position, GhostsManager.Instance.player.transform.position) < chasingDistance)
         {
             if (ParserMap.Instance.map[column + _oldColumn, row + _oldRow] == 0 && 

@@ -128,12 +128,12 @@ public class GhostsManager : MonoBehaviour
 
 
             //tone
-            tonalPart = (1f - noiseRatio) * (float)(_distancesGhosts[2] * (Mathf.Sin(_phase) * Mathf.Cos(_phase)));
+            tonalPart = (noiseRatio) * (float)(_distancesGhosts[2] * (Mathf.Sin(_phase) * Mathf.Cos(_phase)));
 
             //together
             if (play)
             {
-                data[i] += tonalPart / 20f;
+                data[i] += tonalPart / 30f;
                 data[i] += noisePart / 5f;
                 data[i] /= tmpDistancePlayer;
             }
@@ -194,8 +194,8 @@ public class GhostsManager : MonoBehaviour
         _source.volume = 1f / tmpDistancePlayer;
         if (!play)
             return;
-        _distortion.distortionLevel = Vector3.Distance(_ghosts[3].gameObject.transform.position.normalized * 2.5f,
-            ParserMap.Instance.finish.transform.position.normalized * 2.5f);
+        _distortion.distortionLevel = Vector3.Distance(_ghosts[3].gameObject.transform.position.normalized / 1.5f,
+            ParserMap.Instance.finish.transform.position.normalized / 1.5f);
         _source.pitch = Mathf.Clamp(1f / Vector3.Distance(_ghosts[0].transform.position / 7.5f,
             ParserMap.Instance.finish.transform.position / 7.5f), 0, 1f);
         for (int i= 0; i < _ghosts.Count; i++)
