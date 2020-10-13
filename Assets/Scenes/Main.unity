@@ -252,7 +252,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 691ca91129ccca84591af03a8ff7c1ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nameMap: map.txt
+  nameMap: map
   wall: {fileID: 4717360479964376344, guid: 5f2e1f2a03e4d1e43b3ad9080d88b02c, type: 3}
   empty: {fileID: 8731448389970477266, guid: 25247e3011c91144382c48eae7e687e5, type: 3}
   exit: {fileID: 4717360479964376344, guid: b6e7193619bff364094d11d66994657b, type: 3}
@@ -260,6 +260,7 @@ MonoBehaviour:
   teleport: {fileID: 8731448389970477266, guid: 61c74d03d03f033488369887c45eddef,
     type: 3}
   pills: {fileID: 8493110308099764684, guid: b9ce9059d6feb65439bffb0de77b6392, type: 3}
+  _mapDeserialize: []
   rows: 0
   columns: 0
   ghostPos: []
@@ -355,6 +356,7 @@ MonoBehaviour:
   buttonRestart: {fileID: 749712368}
   levels: {fileID: 2063623331}
   score: {fileID: 831169232}
+  play: 1
   timeStopGhosts: 2
 --- !u!170 &519420036
 AudioDistortionFilter:

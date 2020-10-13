@@ -2,7 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
@@ -16,6 +18,7 @@ public class ParserMap : MonoBehaviour
     [SerializeField] private GameObject terrain = null;
     [SerializeField] private GameObject teleport = null;
     [SerializeField] private GameObject pills = null;
+    [SerializeField]
     private string[] _mapDeserialize;
     [FormerlySerializedAs("_map")] public int[,] map;
     [FormerlySerializedAs("_mapConcrete")] public GameObject[,] mapConcrete;
@@ -25,24 +28,30 @@ public class ParserMap : MonoBehaviour
     public Vector2Int playerPos;
     public GameObject finish;
     private Camera _cam = null;
+
     private void Awake()
     {
         Instance = this;
         ghostPos = new List<Vector2Int>();
         _cam = Camera.main;
-        _mapDeserialize = File.ReadAllLines(Application.streamingAssetsPath + "/" + nameMap);
+        TextAsset textFile = Resources.Load<TextAsset>(nameMap);
+        _mapDeserialize = textFile.text.Split(Environment.NewLine.ToCharArray(), 200, StringSplitOptions.RemoveEmptyEntries);
+        for (int i = 0; i < _mapDeserialize.Length; i++)
+            _mapDeserialize[i] = _mapDeserialize[i].Replace("\n", "").Replace("\r", "");
+        // _mapDeserialize = File.ReadAllLines(Application.streamingAssetsPath + "/" + nameMap;
         rows = _mapDeserialize.Length;
         columns = _mapDeserialize[0].Length;
+        Debug.Log("Columns = " + columns);
+        Debug.Log("Rows = " + rows);
         map = new int[columns,rows];
         mapConcrete = new GameObject[columns,rows];
-        for (int i = 0; i < columns; i++)
+        for (int i = 0; i < rows; i++)
         {
-            for (int j = 0; j < rows; j++)
+            for (int j = 0; j < columns; j++)
             {
-                if (!int.TryParse(_mapDeserialize[j][i].ToString(), out map[i, j]))
+                if (!int.TryParse(_mapDeserialize[i][j].ToString(), out map[j, i]))
                 {
                     Debug.LogError("Invalid Map!!!");
-                    return;
                 }
             }
         }
